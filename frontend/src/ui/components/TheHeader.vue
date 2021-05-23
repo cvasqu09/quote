@@ -8,6 +8,9 @@
       <router-link to="/settings">
         <Button label="Settings" class="p-button-text"></Button>
       </router-link>
+      <router-link to="/login">
+        <Button label="Login" class="p-button-text"></Button>
+      </router-link>
     </div>
   </section>
 </template>
