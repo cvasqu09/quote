@@ -11,13 +11,25 @@
         <InputText id="quoter" type="text"></InputText>
       </div>
     </div>
-    <Button class="submit-button">Submit</Button>
+    <Button class="submit-button" @click="onSubmit()">Submit</Button>
   </div>
 </template>
 
 <script>
+import http from "../utils/http";
+
 export default {
-  name: "AddQuoteForm"
+  name: "AddQuoteForm",
+  setup() {
+    const onSubmit = async () => {
+      await http.post('quote/', {name: 'test user'})
+    }
+
+
+    return {
+      onSubmit
+    }
+  }
 }
 </script>
 

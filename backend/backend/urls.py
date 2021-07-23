@@ -16,8 +16,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
+from rest_framework.routers import DefaultRouter
+
+from app.viewsets import UserViewSet, QuoteViewSet
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'quote', QuoteViewSet, basename='quote')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', obtain_auth_token, name='obtain_auth_token')
-]
+    path('auth/', obtain_auth_token, name='obtain_auth_token'),
+] + router.urls
