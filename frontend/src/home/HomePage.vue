@@ -5,7 +5,8 @@
 
 <script>
 import AddQuoteForm from "./AddQuoteForm.vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import http from "../utils/http";
 
 export default {
   name: "HomePage",
@@ -13,6 +14,12 @@ export default {
   setup() {
     const showForm = ref(false);
     const toggleShowForm = () => showForm.value = !showForm.value
+
+    onMounted(async () => {
+      const quotes = await http.get('quote')
+      console.log({quotes})
+    })
+
     return {
       toggleShowForm,
       showForm

@@ -4,11 +4,11 @@
     <div class="p-fluid">
       <div class="p-field">
         <label for="quote">Quote</label>
-        <TextArea id="quote" rows="4"></TextArea>
+        <TextArea id="quote" rows="4" v-model="quote"></TextArea>
       </div>
       <div class="p-field">
         <label for="quoter">Quoter</label>
-        <InputText id="quoter" type="text"></InputText>
+        <InputText id="quoter" type="text" v-model="quoter"></InputText>
       </div>
     </div>
     <Button class="submit-button" @click="onSubmit()">Submit</Button>
@@ -17,17 +17,23 @@
 
 <script>
 import http from "../utils/http";
+import {ref} from "vue";
 
 export default {
   name: "AddQuoteForm",
   setup() {
     const onSubmit = async () => {
-      await http.post('quote/', {name: 'test user'})
+      await http.post('quote/', {name: quoter.value, text: quote.value});
     }
+
+    const quote = ref();
+    const quoter = ref();
 
 
     return {
-      onSubmit
+      quote,
+      quoter,
+      onSubmit,
     }
   }
 }
@@ -41,7 +47,7 @@ export default {
 .submit-button {
   width: fit-content;
   align-self: flex-end;
- }
+}
 
 label {
   float: left;

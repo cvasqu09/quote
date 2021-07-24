@@ -12,6 +12,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class QuoteSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='added_by.username', read_only=True)
+    quoter = serializers.CharField(source='quoted_by.name', read_only=True)
+
     class Meta:
         model = Quote
-        fields = '__all__'
+        fields = ['id', 'text', 'username', 'quoter']
