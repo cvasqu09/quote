@@ -11,10 +11,13 @@
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primevue": "3.3.5",
+    "randomcolor": "^0.6.2",
+    "sass": "^1.36.0",
     "vue": "^3.0.5",
     "vue-router": "4.0.6"
   },
   "devDependencies": {
+    "@types/randomcolor": "^0.5.6",
     "@vitejs/plugin-vue": "^1.2.2",
     "@vue/compiler-sfc": "^3.0.5",
     "eslint": "^7.27.0",
