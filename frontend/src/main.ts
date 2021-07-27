@@ -11,6 +11,8 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Password from "primevue/password";
 import Card from "primevue/card";
+import ToastService from "primevue/toastservice";
+import Toast from "primevue/toast";
 
 import "primevue/resources/themes/saga-purple/theme.css"; //theme
 import "primevue/resources/primevue.min.css"; //core css
@@ -45,6 +47,8 @@ app.component("InputText", InputText);
 app.component("Password", Password);
 app.component("TextArea", Textarea);
 app.component("Card", Card);
+app.component("Toast", Toast);
+app.use(ToastService);
 
 app.provide("http", http);
 

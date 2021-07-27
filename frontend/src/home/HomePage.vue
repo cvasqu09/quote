@@ -1,9 +1,11 @@
 <template>
-  <Button class="p-mb-2" @click="toggleShowForm()">Add Quote</Button>
-  <AddQuoteForm v-if="showForm"></AddQuoteForm>
+  <AddQuoteForm v-if="showForm" @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
   <div class="p-d-flex p-flex-wrap">
-    <Quote v-for="quote of quotes" :quote="quote.text" :quoter="quote.quoter" class="p-mr-2 p-mb-2"
+    <Quote v-for="quote of quotes" :quote="quote.text" :quoter="quote.quoter" :id="quote.id.toString()" class="p-mr-2 p-mb-2"
            :style="generateRandomColorStyle()"></Quote>
+  </div>
+  <div class="p-d-flex p-jc-end">
+    <Button label="Add Quote" icon="pi pi-plus" class="p-mb-2 p-button-rounded" @click="toggleShowForm()"></Button>
   </div>
 </template>
 
@@ -21,16 +23,28 @@ export default {
     const showForm = ref(false);
     const quotes = ref([]);
     const toggleShowForm = () => showForm.value = !showForm.value
-
-    onMounted(async () => {
+    const loadQuotes = async () => {
       try {
         const response = await http.get('quote');
         quotes.value = response.data
       } catch (e) {
         console.log('error', e);
       }
-      console.log(quotes.value)
+    }
+
+    onMounted(async () => {
+      await loadQuotes();
     })
+
+    const quoteAdded = async () => {
+
+      await loadQuotes();
+    }
+
+    const onCancel = () => {
+      showForm.value = !showForm.value;
+    }
+
 
     const generateRandomColorStyle = () => {
       const color = rc.randomColor({
@@ -43,6 +57,8 @@ export default {
 
     return {
       quotes,
+      quoteAdded,
+      onCancel,
       toggleShowForm,
       generateRandomColorStyle,
       showForm

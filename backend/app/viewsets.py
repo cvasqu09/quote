@@ -22,6 +22,7 @@ def _create_quote_and_save(quote, quoter, added_by):
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
     permission_classes = (IsAuthenticated,)
+    queryset = Quote.objects.all()
 
     def list(self, request):
         queryset = Quote.objects.filter(added_by__username=request.user)
