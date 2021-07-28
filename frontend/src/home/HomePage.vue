@@ -1,9 +1,8 @@
 <template>
-  <AddQuoteForm v-if="showForm" @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
-  <div class="p-d-flex p-flex-wrap">
-    <Quote v-for="quote of quotes" :quote="quote.text" :quoter="quote.quoter" :id="quote.id.toString()" class="p-mr-2 p-mb-2"
-           :style="generateRandomColorStyle()"></Quote>
+  <div v-show="shouldShowForm">
+    <AddQuoteForm @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
   </div>
+  <QuoteList :quotes="quotes"></QuoteList>
   <div class="p-d-flex p-jc-end">
     <Button label="Add Quote" icon="pi pi-plus" class="p-mb-2 p-button-rounded" @click="toggleShowForm()"></Button>
   </div>
@@ -11,18 +10,20 @@
 
 <script>
 import AddQuoteForm from "./AddQuoteForm.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, provide, ref} from "vue";
 import http from "../utils/http";
 import Quote from "./Quote.vue";
-import rc from "randomcolor";
+import {computed} from "@vue/reactivity";
+import QuoteList from "./QuoteList.vue";
 
 export default {
   name: "HomePage",
-  components: {Quote, AddQuoteForm},
+  components: {Quote, AddQuoteForm, QuoteList},
   setup() {
     const showForm = ref(false);
     const quotes = ref([]);
     const toggleShowForm = () => showForm.value = !showForm.value
+
     const loadQuotes = async () => {
       try {
         const response = await http.get('quote');
@@ -34,34 +35,33 @@ export default {
 
     onMounted(async () => {
       await loadQuotes();
-    })
+    });
+
+    const shouldShowForm = computed(() => showForm.value);
+
+    const removeQuoteFromList = (index) => {
+      quotes.value.splice(index, 1);
+    }
 
     const quoteAdded = async () => {
-
       await loadQuotes();
+      toggleShowForm();
     }
 
     const onCancel = () => {
-      showForm.value = !showForm.value;
+      toggleShowForm();
     }
 
-
-    const generateRandomColorStyle = () => {
-      const color = rc.randomColor({
-        luminosity: 'light'
-      })
-      return {
-        'background-color': color,
-      }
-    }
+    provide('quotes', quotes);
+    provide('removeQuote', removeQuoteFromList);
 
     return {
       quotes,
       quoteAdded,
       onCancel,
       toggleShowForm,
-      generateRandomColorStyle,
-      showForm
+      removeQuoteFromList,
+      shouldShowForm
     }
   }
 };

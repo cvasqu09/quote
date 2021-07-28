@@ -11,7 +11,9 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Password from "primevue/password";
 import Card from "primevue/card";
+import ConfirmPopup from "primevue/confirmpopup";
 import ToastService from "primevue/toastservice";
+import ConfirmationService from "primevue/confirmationservice";
 import Toast from "primevue/toast";
 
 import "primevue/resources/themes/saga-purple/theme.css"; //theme
