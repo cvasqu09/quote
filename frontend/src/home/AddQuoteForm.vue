@@ -7,9 +7,9 @@
         <label for="quote">Quote</label>
         <TextArea id="quote" rows="4" v-model="quote"></TextArea>
       </div>
-      <div class="p-field">
+      <div class="p-field p-d-flex p-flex-column">
         <label for="quoter">Quoter</label>
-        <InputText id="quoter" type="text" v-model="quoter"></InputText>
+        <AutoComplete id="quoter" type="text" v-model="quoter"></AutoComplete>
       </div>
     </div>
     <div class="p-d-flex p-jc-end">

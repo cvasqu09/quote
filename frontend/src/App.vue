@@ -16,7 +16,7 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -24,4 +24,13 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
 }
+
+html {
+  background-color: $gray-2;
+}
+
+body {
+  color: $gray-7;
+}
+
 </style>

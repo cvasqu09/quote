@@ -11,12 +11,11 @@ import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Password from "primevue/password";
 import Card from "primevue/card";
-import ConfirmPopup from "primevue/confirmpopup";
 import ToastService from "primevue/toastservice";
-import ConfirmationService from "primevue/confirmationservice";
 import Toast from "primevue/toast";
+import AutoComplete from "primevue/autocomplete";
 
-import "primevue/resources/themes/saga-purple/theme.css"; //theme
+import "primevue/resources/themes/md-light-deeppurple/theme.css"; //theme
 import "primevue/resources/primevue.min.css"; //core css
 import "primeicons/primeicons.css"; //icons
 import "primeflex/primeflex.css";
