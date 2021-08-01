@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from app.models import Quote
+from app.models import Quote, Quoter
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -18,3 +18,9 @@ class QuoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quote
         fields = ['id', 'text', 'username', 'quoter']
+
+
+class QuoterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quoter
+        fields = '__all__'

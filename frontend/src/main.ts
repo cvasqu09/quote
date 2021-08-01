@@ -49,6 +49,7 @@ app.component("Password", Password);
 app.component("TextArea", Textarea);
 app.component("Card", Card);
 app.component("Toast", Toast);
+app.component("AutoComplete", AutoComplete);
 app.use(ToastService);
 
 app.provide("http", http);

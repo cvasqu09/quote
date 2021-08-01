@@ -1,10 +1,10 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from app.models import Quoter, Quote
-from app.serializers import UserSerializer, QuoteSerializer
+from app.serializers import UserSerializer, QuoteSerializer, QuoterSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -49,3 +49,11 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class QuoterViewSet(viewsets.ModelViewSet):
+    serializer_class = QuoterSerializer
+    permission_classes = (IsAuthenticated,)
+    queryset = Quoter.objects.all()
+    search_fields = ['name']
+    filter_backends = [filters.SearchFilter]
