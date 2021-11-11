@@ -98,6 +98,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PERMISSION_CLASSES': ['app.permissions.DevProdAuthenticated']
 }
 
 CORS_ALLOWED_ORIGINS = [

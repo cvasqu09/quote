@@ -9,7 +9,8 @@
       </div>
     </template>
     <template #footer>
-      <div class="p-d-flex p-jc-end">
+      <div class="p-d-flex p-jc-between">
+        <span><i class="pi pi-heart"></i> {{likes}}</span>
         <span class="quoter quote-text">-{{quoter}}</span>
       </div>
     </template>
@@ -27,6 +28,11 @@ export default {
       type: String,
       required: true,
     },
+    likes: {
+      type: Number,
+      required: false,
+      default: 0
+    },
     quote: {
       type: String,
       required: true
@@ -35,6 +41,11 @@ export default {
       type: String,
       required: true,
       default: 'Unknown'
+    },
+    allowDelete: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   setup(props, { emit }) {
@@ -42,7 +53,7 @@ export default {
     const showDeleteIcon = ref(false);
 
     const toggleShowDeleteIcon = () => {
-      showDeleteIcon.value = !showDeleteIcon.value
+      showDeleteIcon.value = (!showDeleteIcon.value && props.allowDelete)
     }
     const deleteQuote = async () => {
       console.log('deleting quote with id', id.value);

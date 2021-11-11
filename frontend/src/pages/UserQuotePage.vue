@@ -2,22 +2,22 @@
   <div v-show="shouldShowForm">
     <AddQuoteForm @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
   </div>
-  <QuoteList :quotes="quotes"></QuoteList>
+  <QuoteList :quotes="quotes" :allow-delete="true"></QuoteList>
   <div class="p-d-flex p-jc-end">
     <Button label="Add Quote" icon="pi pi-plus" class="p-mb-2 p-button-rounded" @click="toggleShowForm()"></Button>
   </div>
 </template>
 
 <script>
-import AddQuoteForm from "./AddQuoteForm.vue";
 import {onMounted, provide, ref} from "vue";
-import http from "../utils/http";
-import Quote from "./Quote.vue";
+import http from "@utils/http";
 import {computed} from "@vue/reactivity";
-import QuoteList from "./QuoteList.vue";
+import AddQuoteForm from "@quote/AddQuoteForm.vue";
+import Quote from "@quote/Quote.vue";
+import QuoteList from "@quote/QuoteList.vue";
 
 export default {
-  name: "HomePage",
+  name: "UserQuotePage",
   components: {Quote, AddQuoteForm, QuoteList},
   setup() {
     const showForm = ref(false);
@@ -64,7 +64,7 @@ export default {
       shouldShowForm
     }
   }
-};
+}
 </script>
 
 <style scoped>

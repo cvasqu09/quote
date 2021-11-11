@@ -1,5 +1,6 @@
-from rest_framework import viewsets, status, filters
 from django.contrib.auth import get_user_model
+from enum import Enum
+from rest_framework import viewsets, status, filters
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -19,18 +20,31 @@ def _create_quote_and_save(quote, quoter, added_by):
     return new_quote
 
 
+class QuoteTypeParam(Enum):
+    ALL = 'all'
+    TOP = 'top'
+
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Quote.objects.all()
+    queryset = Quote.objects.all().order_by('-added_at')
 
     def list(self, request):
-        queryset = Quote.objects.filter(added_by__username=request.user)
+        query_params = request.query_params
+        type_param = query_params.get('type', None)
+        print(type_param)
+        if type_param == QuoteTypeParam.ALL.value:
+            queryset = self.queryset
+        elif type_param == QuoteTypeParam.TOP.value:
+            # TODO: Use Top quotes
+            queryset = self.queryset
+        else:
+            queryset = Quote.objects.filter(added_by__username=request.user)
+        print('liked by', queryset.first().liked_by.all())
+        print('liked by', queryset.first().id)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
-        print(request.data)
         quoter_name = request.data["name"]
         quote = request.data["text"]
         user = request.user
@@ -46,7 +60,6 @@ class QuoteViewSet(viewsets.ModelViewSet):
             new_quote = _create_quote_and_save(quote, quoter.first(), user)
 
         serializer = self.get_serializer(new_quote)
-
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

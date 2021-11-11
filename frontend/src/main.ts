@@ -2,11 +2,13 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import PrimeVue from "primevue/config";
 import { createRouter, createWebHashHistory } from "vue-router";
-import HomePage from "../src/home/HomePage.vue";
+import HomePage from "../src/pages/HomePage.vue";
+import UserQuotePage from "../src/pages/UserQuotePage.vue";
 import SettingsPage from "../src/settings/SettingsPage.vue";
 import LoginPage from "../src/login/LoginPage.vue";
 
 import Button from "primevue/button";
+import SelectButton from "primevue/selectbutton";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
 import Password from "primevue/password";
@@ -23,6 +25,7 @@ import http from "./utils/http";
 
 const routes = [
   { path: "/home", component: HomePage, name: "home" },
+  { path: "/quotes", component: UserQuotePage, name: "user-quotes" },
   {
     path: "/settings",
     component: SettingsPage,
@@ -50,6 +53,7 @@ app.component("TextArea", Textarea);
 app.component("Card", Card);
 app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
+app.component("SelectButton", SelectButton);
 app.use(ToastService);
 
 app.provide("http", http);

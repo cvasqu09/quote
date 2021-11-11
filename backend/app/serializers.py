@@ -17,7 +17,7 @@ class QuoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Quote
-        fields = ['id', 'text', 'username', 'quoter']
+        fields = ['id', 'text', 'username', 'quoter', 'likes']
 
 
 class QuoterSerializer(serializers.ModelSerializer):

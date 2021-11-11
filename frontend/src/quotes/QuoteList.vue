@@ -1,6 +1,8 @@
 <template>
   <div class="p-d-flex p-flex-wrap">
-    <Quote v-for="(quote, index) in quotes" :key="quote.id.toString()" :quote="quote.text" :quoter="quote.quoter" :id="quote.id.toString()" class="p-mr-2 p-mb-2"
+    <Quote v-for="(quote, index) in quotes" :key="quote.id.toString()" :quote="quote.text" :quoter="quote.quoter"
+           :allow-delete="allowDelete"
+           :id="quote.id.toString()" class="p-mr-2 p-mb-2"
            :style="generateRandomColorStyle()" @delete="removeQuoteFromList(index)"></Quote>
   </div>
 </template>
@@ -18,6 +20,11 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    },
+    allowDelete: {
+      type: Boolean,
+      required: false,
+      default: () => false
     }
   },
   setup() {

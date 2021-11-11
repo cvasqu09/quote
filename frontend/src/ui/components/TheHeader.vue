@@ -5,6 +5,9 @@
       <router-link to="/home">
         <Button label="Home" class="p-button-text"></Button>
       </router-link>
+      <router-link to="/quotes">
+        <Button label="My Quotes" class="p-button-text"></Button>
+      </router-link>
       <router-link to="/settings">
         <Button label="Settings" class="p-button-text"></Button>
       </router-link>
