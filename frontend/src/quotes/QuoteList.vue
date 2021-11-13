@@ -1,7 +1,9 @@
 <template>
   <div class="p-d-flex p-flex-wrap">
     <Quote v-for="(quote, index) in quotes" :key="quote.id.toString()" :quote="quote.text" :quoter="quote.quoter"
+           :liked_by_user="quote.liked_by_user"
            :allow-delete="allowDelete"
+           :like_count="quote.like_count"
            :id="quote.id.toString()" class="p-mr-2 p-mb-2"
            :style="generateRandomColorStyle()" @delete="removeQuoteFromList(index)"></Quote>
   </div>

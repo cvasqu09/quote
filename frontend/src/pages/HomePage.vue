@@ -7,7 +7,7 @@
 
 <script>
 
-import {onMounted} from "vue";
+import {onMounted, watch} from "vue";
 import {ref} from "@vue/reactivity";
 import http from "@utils/http";
 import QuoteList from "@quote/QuoteList.vue";
@@ -23,7 +23,7 @@ export default {
     ]
     const selectedOptionValue = ref('all');
 
-    const loadQuoter = async () => {
+    const loadQuotes = async () => {
       try {
         const response = await http.get(`quote?type=${selectedOptionValue.value}`);
         quotes.value = response.data
@@ -33,7 +33,11 @@ export default {
     }
 
     onMounted(async () => {
-      await loadQuoter();
+      await loadQuotes();
+    })
+
+    watch(selectedOptionValue, async () => {
+      await loadQuotes();
     })
 
     return {

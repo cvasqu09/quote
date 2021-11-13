@@ -9,7 +9,7 @@
       </div>
       <div class="p-field p-d-flex p-flex-column">
         <label for="quoter">Quoter</label>
-        <AutoComplete id="quoter" type="text" :suggestions="suggestedQuoters" @complete="getQuoters($event)"  v-model="quoter" field="name"></AutoComplete>
+        <AutoComplete id="quoter.id" type="text" :suggestions="suggestedQuoters" @complete="getQuoters($event)"  v-model="quoter" field="name"></AutoComplete>
       </div>
     </div>
     <div class="p-d-flex p-jc-end">
@@ -23,6 +23,7 @@
 import http from "../utils/http";
 import {onMounted, ref} from "vue";
 import {useToast} from "primevue/usetoast";
+import get from 'lodash/get';
 
 export default {
   name: "AddQuoteForm",
@@ -41,7 +42,9 @@ export default {
 
     const onSubmit = async () => {
       try {
-        await http.post('quote/', {name: quoter.value, text: quote.value});
+        // Get existing user from auto complete or use as name
+        const name = get(quoter.value, 'name', quoter.value)
+        await http.post('quote/', {name: name, text: quote.value});
         toastService.add({severity: 'success', summary: 'Success!', detail: 'Quote added', life: 3000})
         emit('onQuoteAdded');
       } catch (e) {

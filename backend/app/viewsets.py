@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 from enum import Enum
+
+from django.db.models import Count
 from rest_framework import viewsets, status, filters
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from app.models import Quoter, Quote
-from app.serializers import UserSerializer, QuoteSerializer, QuoterSerializer
+from app.models import Quoter, Quote, Like
+from app.serializers import UserSerializer, QuoteSerializer, QuoterSerializer, LikeSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,24 +25,28 @@ class QuoteTypeParam(Enum):
     ALL = 'all'
     TOP = 'top'
 
+
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
-    queryset = Quote.objects.all().order_by('-added_at')
+    queryset = Quote.objects.select_related('quoted_by', 'added_by').all().order_by('-added_at')
 
     def list(self, request):
         query_params = request.query_params
         type_param = query_params.get('type', None)
-        print(type_param)
         if type_param == QuoteTypeParam.ALL.value:
-            queryset = self.queryset
+            queryset = self.get_queryset()
         elif type_param == QuoteTypeParam.TOP.value:
-            # TODO: Use Top quotes
-            queryset = self.queryset
+            queryset = Quote.objects.get_top_quotes()
         else:
             queryset = Quote.objects.filter(added_by__username=request.user)
-        print('liked by', queryset.first().liked_by.all())
-        print('liked by', queryset.first().id)
-        serializer = self.get_serializer(queryset, many=True)
+        quote_ids = queryset.values_list("id", flat=True)
+        user_likes = frozenset(Like.objects.filter(quote__in=quote_ids).values_list("quote", flat=True))
+        likes_qs = queryset.values("id").annotate(like_count=Count('like'))
+        likes_count = {}
+        for like in likes_qs:
+            likes_count[like['id']] = like['like_count']
+        serializer = self.get_serializer(queryset, many=True,
+                                         context={"user_likes": user_likes, "likes_count": likes_count})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request):
@@ -66,7 +71,25 @@ class QuoteViewSet(viewsets.ModelViewSet):
 
 class QuoterViewSet(viewsets.ModelViewSet):
     serializer_class = QuoterSerializer
-    permission_classes = (IsAuthenticated,)
     queryset = Quoter.objects.all()
     search_fields = ['name']
     filter_backends = [filters.SearchFilter]
+
+
+class LikeViewSet(viewsets.ModelViewSet):
+    serializer_class = LikeSerializer
+    queryset = Like.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        like = Like.objects.filter(quote=request.data["quote"], user=request.user).first()
+        if like:
+            like.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer_data = {"quote": request.data["quote"], "user": request.user.id}
+            serializer = self.get_serializer(data=serializer_data)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                return Response({"errors": serializer.errors}, status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)

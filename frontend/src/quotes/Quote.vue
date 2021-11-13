@@ -1,17 +1,20 @@
 <template>
-  <Card class="quote-card" @click="toggleShowDeleteIcon">
+  <Card class="quote-card">
     <template #content>
       <div class="p-d-flex p-jc-between">
-        <span class="p-mr-3 quote-text">"{{quote}}"</span>
+        <span class="p-mr-3 quote-text">"{{ quote }}"</span>
         <transition name="fade">
-          <i v-show="showDeleteIcon" class="pi pi-trash trash-icon" @click="deleteQuote()"></i>
+          <i v-show="allowDelete" class="pi pi-trash trash-icon" @click="deleteQuote()"></i>
         </transition>
       </div>
     </template>
     <template #footer>
       <div class="p-d-flex p-jc-between">
-        <span><i class="pi pi-heart"></i> {{likes}}</span>
-        <span class="quoter quote-text">-{{quoter}}</span>
+        <span>
+          <i class="pi pi-heart p-mr-1" v-bind:class="{'liked': liked_by_user}" @click="toggleLike()"></i>
+          {{ like_count }}
+        </span>
+        <span class="quoter quote-text">-{{ quoter }}</span>
       </div>
     </template>
   </Card>
@@ -20,6 +23,9 @@
 <script>
 import {ref, toRefs} from "@vue/reactivity";
 import http from "../utils/http";
+import {useToast} from "primevue/usetoast";
+import {StatusCodes} from "http-status-codes";
+import {debounce} from "lodash";
 
 export default {
   name: "Quote",
@@ -28,7 +34,12 @@ export default {
       type: String,
       required: true,
     },
-    likes: {
+    liked_by_user: {
+      type: Boolean,
+      required: false,
+      default: false
+    },
+    like_count: {
       type: Number,
       required: false,
       default: 0
@@ -48,9 +59,12 @@ export default {
       default: false
     }
   },
-  setup(props, { emit }) {
-    const { quote, quoter, id } = toRefs(props)
+  setup(props, {emit}) {
+    const {quote, quoter, id} = toRefs(props)
     const showDeleteIcon = ref(false);
+    const liked_by_user = ref(props.liked_by_user)
+    const like_count = ref(props.like_count)
+    const toastService = useToast();
 
     const toggleShowDeleteIcon = () => {
       showDeleteIcon.value = (!showDeleteIcon.value && props.allowDelete)
@@ -60,24 +74,57 @@ export default {
       try {
         await http.delete(`quote/${id.value}`);
         emit('delete')
-      } catch(e) {
+      } catch (e) {
         console.log('error deleting', e);
       }
     }
+    const getLikeClass = () => {
+      return liked_by_user.value ? 'liked' : null;
+    }
+    const toggleLike = debounce(async () => {
+      try {
+        const response = await http.post(`like/`, {quote: props.id})
+        liked_by_user.value = !liked_by_user.value;
+        if (response.status === StatusCodes.CREATED) {
+          like_count.value += 1
+        } else {
+          like_count.value -= 1
+        }
+      } catch (e) {
+        toastService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error liking quote. Try again later.',
+          life: 5000
+        })
+      }
+    }, 300)
 
     return {
-      quote, quoter, deleteQuote, showDeleteIcon, toggleShowDeleteIcon
+      quote,
+      quoter,
+      deleteQuote,
+      showDeleteIcon,
+      toggleShowDeleteIcon,
+      getLikeClass,
+      toggleLike,
+      liked_by_user,
+      like_count
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-::v-deep .p-card-body {
+:deep(.p-card-body) {
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.liked {
+  color: red;
 }
 
 .fade-enter-from {
