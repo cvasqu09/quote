@@ -2,6 +2,7 @@
   <div v-show="shouldShowForm">
     <AddQuoteForm @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
   </div>
+  <ProgressSpinner v-if="loading"/>
   <QuoteList :quotes="quotes" :allow-delete="true"></QuoteList>
   <div class="p-d-flex p-jc-end">
     <Button label="Add Quote" icon="pi pi-plus" class="p-mb-2 p-button-rounded" @click="toggleShowForm()"></Button>
@@ -10,11 +11,12 @@
 
 <script>
 import {onMounted, provide, ref} from "vue";
-import http from "@utils/http";
 import {computed} from "@vue/reactivity";
-import AddQuoteForm from "@quote/AddQuoteForm.vue";
-import Quote from "@quote/Quote.vue";
-import QuoteList from "@quote/QuoteList.vue";
+import Quote from "../quotes/Quote.vue";
+import AddQuoteForm from "../quotes/AddQuoteForm.vue";
+import QuoteList from "../quotes/QuoteList.vue";
+import useQuotes from "../composables/useQuotes";
+
 
 export default {
   name: "UserQuotePage",
@@ -23,10 +25,11 @@ export default {
     const showForm = ref(false);
     const quotes = ref([]);
     const toggleShowForm = () => showForm.value = !showForm.value
+    const {getQuotes, loading} = useQuotes()
 
     const loadQuotes = async () => {
       try {
-        const response = await http.get('quote');
+        const response = await getQuotes();
         quotes.value = response.data
       } catch (e) {
         console.log('error', e);
@@ -61,7 +64,8 @@ export default {
       onCancel,
       toggleShowForm,
       removeQuoteFromList,
-      shouldShowForm
+      shouldShowForm,
+      loading
     }
   }
 }

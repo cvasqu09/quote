@@ -35,4 +35,11 @@ http.interceptors.request.use((config) => {
   return config;
 });
 
+export enum HTTPMethod {
+  GET = "get",
+  POST = "post",
+  PUT = "put",
+  PATCH = "patch",
+  DELETE = "DELETE",
+}
 export default http;

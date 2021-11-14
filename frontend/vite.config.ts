@@ -12,8 +12,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@quote": path.resolve(__dirname, "./src/quotes"),
-      "@utils": path.resolve(__dirname, "./src/utils"),
+      "@": path.resolve(__dirname, "./src"),
     },
+    extensions: ["*", ".vue", ".ts", ".js"],
   },
 });

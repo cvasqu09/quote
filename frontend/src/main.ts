@@ -1,5 +1,4 @@
 import { createApp } from "vue";
-import App from "./App.vue";
 import PrimeVue from "primevue/config";
 import { createRouter, createWebHashHistory } from "vue-router";
 import HomePage from "../src/pages/HomePage.vue";
@@ -16,6 +15,9 @@ import Card from "primevue/card";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import AutoComplete from "primevue/autocomplete";
+import ProgressSpinner from "primevue/progressspinner";
+
+import App from "./App.vue";
 
 import "primevue/resources/themes/md-light-deeppurple/theme.css"; //theme
 import "primevue/resources/primevue.min.css"; //core css
@@ -54,6 +56,7 @@ app.component("Card", Card);
 app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("SelectButton", SelectButton);
+app.component("ProgressSpinner", ProgressSpinner);
 app.use(ToastService);
 
 app.provide("http", http);

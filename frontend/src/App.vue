@@ -33,4 +33,13 @@ body {
   color: $gray-7;
 }
 
+@keyframes p-progress-spinner-color {
+  0% {
+    stroke: #673AB7;
+  }
+  100% {
+    stroke: #673AB7
+  }
+}
+
 </style>
