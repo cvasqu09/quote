@@ -10,14 +10,19 @@ export enum QuoteType {
 export default () => {
   const { makeRequest, loading } = useMakeRequest();
 
-  const getQuotes = async (type?: QuoteType) => {
-    let url = "quote";
-    if (type) {
-      url += `?type=${type}`;
+  const getQuotes = async (type: QuoteType, searchText?: string) => {
+    let url = "quote/?";
+    url += `type=${type}`;
+
+    if (searchText) {
+      url += `&search=${searchText}`;
     }
+
     try {
+      console.log("calling");
       return await makeRequest(url, HTTPMethod.GET);
     } catch (e) {
+      console.log("error");
       return [];
     }
   };

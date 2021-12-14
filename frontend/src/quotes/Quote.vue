@@ -98,7 +98,7 @@ export default {
           life: 5000
         })
       }
-    }, 300)
+    }, 200)
 
     return {
       quote,

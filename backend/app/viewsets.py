@@ -29,14 +29,18 @@ class QuoteTypeParam(Enum):
 class QuoteViewSet(viewsets.ModelViewSet):
     serializer_class = QuoteSerializer
     queryset = Quote.objects.select_related('quoted_by', 'added_by').all().order_by('-added_at')
+    search_fields = ['text', 'quoted_by__name']
+    filter_backends = (filters.SearchFilter,)
 
     def list(self, request):
         query_params = request.query_params
         type_param = query_params.get('type', None)
+        queryset = self.filter_queryset(self.get_queryset())
+
         if type_param == QuoteTypeParam.ALL.value:
-            queryset = self.get_queryset()
+            queryset = queryset
         elif type_param == QuoteTypeParam.TOP.value:
-            queryset = Quote.objects.get_top_quotes()
+            queryset = self.filter_queryset(Quote.objects.get_top_quotes())
         else:
             queryset = Quote.objects.filter(added_by__username=request.user)
         quote_ids = queryset.values_list("id", flat=True)
