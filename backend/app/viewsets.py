@@ -73,11 +73,33 @@ class QuoteViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class QuoterTypeParam(Enum):
+    TOP = 'top'
+
+
 class QuoterViewSet(viewsets.ModelViewSet):
     serializer_class = QuoterSerializer
     queryset = Quoter.objects.all()
     search_fields = ['name']
     filter_backends = [filters.SearchFilter]
+
+    def list(self, request):
+        query_params = request.query_params
+        type_param = query_params.get('type', None)
+        queryset = self.filter_queryset(self.get_queryset())
+
+        if type_param == QuoterTypeParam.TOP.value:
+            queryset = self.filter_queryset(Quoter.objects.get_most_quoted())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            print('queryset', list(page.values("name", "quote_count")))
+
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LikeViewSet(viewsets.ModelViewSet):

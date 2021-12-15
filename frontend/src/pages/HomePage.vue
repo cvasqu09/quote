@@ -29,7 +29,8 @@ export default {
     const quotes = ref([])
     const selectOptions = [
       {name: 'All', value: 'all'},
-      {name: 'Top', value: 'top'},
+      {name: 'Most Liked', value: 'top'},
+      {name: 'Most Quoted', value: 'quoted'}
     ]
     const searchText = ref('');
     const selectedOptionValue = ref(QuoteType.ALL);

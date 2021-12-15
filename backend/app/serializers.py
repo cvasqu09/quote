@@ -36,7 +36,7 @@ class QuoteSerializer(serializers.ModelSerializer):
 class QuoterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quoter
-        fields = '__all__'
+        fields = ["id", "name"]
 
 
 class LikeSerializer(serializers.ModelSerializer):
