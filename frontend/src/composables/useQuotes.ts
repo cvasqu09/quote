@@ -8,7 +8,7 @@ export enum QuoteType {
 }
 
 export default () => {
-  const { makeRequest, loading } = useMakeRequest();
+  const { makeRequest, loading: quotesLoading } = useMakeRequest();
 
   const getQuotes = async (type: QuoteType, searchText?: string) => {
     let url = "quote/?";
@@ -27,5 +27,5 @@ export default () => {
     }
   };
 
-  return { getQuotes, loading };
+  return { getQuotes, quotesLoading };
 };

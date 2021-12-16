@@ -39,6 +39,13 @@ class QuoterSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class TopQuoterSerializer(QuoterSerializer):
+    quote_count = serializers.IntegerField()
+
+    class Meta(QuoterSerializer.Meta):
+        fields = QuoterSerializer.Meta.fields + ['quote_count']
+
+
 class LikeSerializer(serializers.ModelSerializer):
     liked_at = serializers.DateTimeField(default=datetime.now())
 

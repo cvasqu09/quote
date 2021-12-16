@@ -13,6 +13,8 @@ import Textarea from "primevue/textarea";
 import Password from "primevue/password";
 import Card from "primevue/card";
 import ToastService from "primevue/toastservice";
+import TabView from "primevue/tabview";
+import TabPanel from "primevue/tabpanel";
 import Toast from "primevue/toast";
 import AutoComplete from "primevue/autocomplete";
 import ProgressSpinner from "primevue/progressspinner";
@@ -57,6 +59,8 @@ app.component("Toast", Toast);
 app.component("AutoComplete", AutoComplete);
 app.component("SelectButton", SelectButton);
 app.component("ProgressSpinner", ProgressSpinner);
+app.component("TabView", TabView);
+app.component("TabPanel", TabPanel);
 app.use(ToastService);
 
 app.provide("http", http);

@@ -6,7 +6,7 @@ from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 
 from app.models import Quoter, Quote, Like
-from app.serializers import UserSerializer, QuoteSerializer, QuoterSerializer, LikeSerializer
+from app.serializers import UserSerializer, QuoteSerializer, QuoterSerializer, LikeSerializer, TopQuoterSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -82,6 +82,12 @@ class QuoterViewSet(viewsets.ModelViewSet):
     queryset = Quoter.objects.all()
     search_fields = ['name']
     filter_backends = [filters.SearchFilter]
+
+    def get_serializer_class(self):
+        if self.request.query_params.get('type', None):
+            return TopQuoterSerializer
+        else:
+            return QuoterSerializer
 
     def list(self, request):
         query_params = request.query_params

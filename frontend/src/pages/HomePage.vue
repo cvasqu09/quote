@@ -1,17 +1,29 @@
 <template>
   <div class="p-d-flex p-jc-between">
     <h2>Home</h2>
-    <span class="p-input-icon-left p-d-flex p-align-center">
-      <i class="pi pi-search"/>
-      <InputText type="text" v-model="searchText" placeholder="Search for quote/quoter"/>
-    </span>
   </div>
-  <SelectButton class="p-mb-2" v-model="selectedOptionValue" :options="selectOptions" optionLabel="name"
-                optionValue="value"></SelectButton>
-  <ProgressSpinner v-if="loading"/>
-  <template v-else>
-    <QuoteList :quotes="quotes"></QuoteList>
-  </template>
+  <TabView v-model:activeIndex="activeIndex" class="tabview">
+    <TabPanel header="Quotes">
+      <div class="p-d-flex p-jc-end">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"/>
+          <InputText type="text" v-model="searchText" placeholder="Search for quote/quoter"/>
+        </span>
+      </div>
+      <SelectButton class="p-mb-2" v-model="selectedOptionValue" :options="selectOptions" optionLabel="name"
+                    optionValue="value"></SelectButton>
+      <ProgressSpinner v-if="quotesLoading"/>
+      <template v-else>
+        <QuoteList :quotes="quotes"></QuoteList>
+      </template>
+    </TabPanel>
+    <TabPanel header="Quoters">
+      <ProgressSpinner v-if="quotersLoading"/>
+      <div v-else>
+        {{ quoters }}
+      </div>
+    </TabPanel>
+  </TabView>
 </template>
 
 <script>
@@ -21,20 +33,24 @@ import {ref} from "@vue/reactivity";
 import QuoteList from "@/quotes/QuoteList";
 import debounce from "lodash/debounce"
 import useQuotes, {QuoteType} from "@/composables/useQuotes";
+import useQuoters, {QuoterType} from "@/composables/useQuoters";
 
 export default {
   name: "HomePage",
   components: {QuoteList},
   setup() {
     const quotes = ref([])
+    const quoters = ref([])
+    const activeIndex = ref(0);
     const selectOptions = [
-      {name: 'All', value: 'all'},
-      {name: 'Most Liked', value: 'top'},
-      {name: 'Most Quoted', value: 'quoted'}
+      {name: 'All', value: QuoteType.ALL},
+      {name: 'Most Liked', value: QuoteType.TOP},
     ]
+
     const searchText = ref('');
     const selectedOptionValue = ref(QuoteType.ALL);
-    const {getQuotes, loading} = useQuotes();
+    const {getQuotes, quotesLoading} = useQuotes();
+    const {getQuoters, quotersLoading} = useQuoters();
 
     const loadQuotes = async (searchText) => {
       try {
@@ -42,6 +58,15 @@ export default {
         quotes.value = response.data
       } catch (e) {
         console.log('error', e);
+      }
+    }
+
+    const loadQuoters = async () => {
+      try {
+        const response = await getQuoters(QuoterType.TOP)
+        quoters.value = response.data
+      } catch(e) {
+        console.log('quoter error', e)
       }
     }
 
@@ -61,13 +86,33 @@ export default {
       await loadQuotes(searchText.value);
     })
 
+    watch(activeIndex, async() => {
+      if (activeIndex.value === 1) {
+        await loadQuoters();
+      }
+    })
+
     return {
-      loading,
+      quotesLoading,
       quotes,
+      quotersLoading,
+      quoters,
       selectedOptionValue,
       selectOptions,
-      searchText
+      searchText,
+      activeIndex
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.tabview :deep(.p-tabview-nav) {
+  background: none;
+  border: none;
+}
+
+.tabview :deep(.p-tabview-panels) {
+  background: none;
+}
+
+</style>
