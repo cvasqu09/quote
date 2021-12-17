@@ -20,7 +20,12 @@
     <TabPanel header="Quoters">
       <ProgressSpinner v-if="quotersLoading"/>
       <div v-else>
-        {{ quoters }}
+        <div class="p-d-flex">
+          <DataTable :value="quoters">
+            <Column field="name" header="Quoter"></Column>
+            <Column field="quote_count" header="Number of Quotes"></Column>
+          </DataTable>
+        </div>
       </div>
     </TabPanel>
   </TabView>
@@ -34,10 +39,11 @@ import QuoteList from "@/quotes/QuoteList";
 import debounce from "lodash/debounce"
 import useQuotes, {QuoteType} from "@/composables/useQuotes";
 import useQuoters, {QuoterType} from "@/composables/useQuoters";
+import QuoterCard from "@/quoters/QuoterCard";
 
 export default {
   name: "HomePage",
-  components: {QuoteList},
+  components: {QuoteList, QuoterCard},
   setup() {
     const quotes = ref([])
     const quoters = ref([])
@@ -113,6 +119,11 @@ export default {
 
 .tabview :deep(.p-tabview-panels) {
   background: none;
+  padding: 1rem 0;
+}
+
+.quoter-card {
+  min-width: 20rem;
 }
 
 </style>

@@ -7,6 +7,8 @@ import SettingsPage from "../src/settings/SettingsPage.vue";
 import LoginPage from "../src/login/LoginPage.vue";
 
 import Button from "primevue/button";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
 import SelectButton from "primevue/selectbutton";
 import InputText from "primevue/inputtext";
 import Textarea from "primevue/textarea";
@@ -61,6 +63,8 @@ app.component("SelectButton", SelectButton);
 app.component("ProgressSpinner", ProgressSpinner);
 app.component("TabView", TabView);
 app.component("TabPanel", TabPanel);
+app.component("DataTable", DataTable);
+app.component("Column", Column);
 app.use(ToastService);
 
 app.provide("http", http);

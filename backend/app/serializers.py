@@ -34,9 +34,15 @@ class QuoteSerializer(serializers.ModelSerializer):
 
 
 class QuoterSerializer(serializers.ModelSerializer):
+    likes = serializers.SerializerMethodField()
+
+    def get_likes(self, obj):
+        print("likes", self.context)
+        return 1
+
     class Meta:
         model = Quoter
-        fields = ["id", "name"]
+        fields = ["id", "name", "likes"]
 
 
 class TopQuoterSerializer(QuoterSerializer):

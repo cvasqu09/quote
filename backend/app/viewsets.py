@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from enum import Enum
 
-from django.db.models import Count
+from django.db.models import Count, F
 from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 
@@ -93,18 +93,21 @@ class QuoterViewSet(viewsets.ModelViewSet):
         query_params = request.query_params
         type_param = query_params.get('type', None)
         queryset = self.filter_queryset(self.get_queryset())
-
+        likes = {}
         if type_param == QuoterTypeParam.TOP.value:
-            queryset = self.filter_queryset(Quoter.objects.get_most_quoted())
+            likes = Like.objects.annotate(quoter_name=F("quote__quoted_by__name"))
+            likes = likes.values("quoter_name").annotate(like_count=Count("quoter_name"))
+
+        queryset = self.filter_queryset(Quoter.objects.get_most_quoted())
 
         page = self.paginate_queryset(queryset)
         if page is not None:
             print('queryset', list(page.values("name", "quote_count")))
 
-            serializer = self.get_serializer(page, many=True)
+            serializer = self.get_serializer(page, many=True, context={"likes": likes})
             return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True, context={"likes": likes})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
