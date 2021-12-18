@@ -3,6 +3,7 @@ from enum import Enum
 
 from django.db.models import Count, F
 from rest_framework import viewsets, status, filters
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from app.models import Quoter, Quote, Like
@@ -102,12 +103,17 @@ class QuoterViewSet(viewsets.ModelViewSet):
 
         page = self.paginate_queryset(queryset)
         if page is not None:
-            print('queryset', list(page.values("name", "quote_count")))
-
             serializer = self.get_serializer(page, many=True, context={"likes": likes})
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True, context={"likes": likes})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=True)
+    def quotes(self, request, pk=None):
+        queryset = Quote.objects.get_top_quotes_by_quoter_with_id(pk)
+        serializer = QuoterSerializer(queryset, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

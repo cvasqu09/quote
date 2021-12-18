@@ -21,11 +21,23 @@
       <ProgressSpinner v-if="quotersLoading"/>
       <div v-else>
         <div class="p-d-flex">
-          <DataTable :value="quoters">
+          {{selectedQuoter}}
+          <DataTable :value="quoters" :paginator="true" :rows="10"
+                     selectionMode="single"
+                     v-model:selection="selectedQuoter"
+                     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+                     currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+                     :rowsPerPageOptions="[10,20,50]" >
             <Column field="name" header="Quoter"></Column>
             <Column field="quote_count" header="Number of Quotes"></Column>
+            <Column field="likes" header="Number of Likes"></Column>
           </DataTable>
         </div>
+        <Card>
+          <template #title>
+
+          </template>
+        </Card>
       </div>
     </TabPanel>
   </TabView>
@@ -53,6 +65,7 @@ export default {
       {name: 'Most Liked', value: QuoteType.TOP},
     ]
 
+    const selectedQuoter = ref(null);
     const searchText = ref('');
     const selectedOptionValue = ref(QuoteType.ALL);
     const {getQuotes, quotesLoading} = useQuotes();
@@ -104,6 +117,7 @@ export default {
       quotersLoading,
       quoters,
       selectedOptionValue,
+      selectedQuoter,
       selectOptions,
       searchText,
       activeIndex

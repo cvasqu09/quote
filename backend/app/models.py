@@ -24,6 +24,9 @@ class QuoteManager(models.Manager):
     def get_top_quotes(self):
         return self.annotate(likes=Count('like')).order_by('-likes', '-added_at')
 
+    def get_top_quotes_by_quoter_with_id(self, quoter_id):
+        return self.filter(quoted_by__id=quoter_id).annotate(likes=Count('like')).order_by('-likes')
+
     def search_for_quotes(self, search_text):
         return self.filter(text__icontains=search_text, quoted_by__name__icontains=search_text)
 

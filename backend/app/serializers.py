@@ -37,8 +37,13 @@ class QuoterSerializer(serializers.ModelSerializer):
     likes = serializers.SerializerMethodField()
 
     def get_likes(self, obj):
-        print("likes", self.context)
-        return 1
+        likes = self.context["likes"]
+        try:
+            matching_likes = next(like for like in likes if like["quoter_name"] == obj["name"])
+            return matching_likes["like_count"]
+        except StopIteration:
+            return 0
+
 
     class Meta:
         model = Quoter
