@@ -112,7 +112,7 @@ class QuoterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True)
     def quotes(self, request, pk=None):
         queryset = Quote.objects.get_top_quotes_by_quoter_with_id(pk)
-        serializer = QuoterSerializer(queryset, many=True)
+        serializer = QuoteSerializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

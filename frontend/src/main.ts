@@ -20,6 +20,8 @@ import TabPanel from "primevue/tabpanel";
 import Toast from "primevue/toast";
 import AutoComplete from "primevue/autocomplete";
 import ProgressSpinner from "primevue/progressspinner";
+import ConfirmPopup from "primevue/confirmpopup";
+import ConfirmationService from "primevue/confirmationservice";
 
 import App from "./App.vue";
 
@@ -52,6 +54,7 @@ const router = createRouter({
 const app = createApp(App);
 app.use(router);
 app.use(PrimeVue);
+app.use(ConfirmationService);
 app.component("Button", Button);
 app.component("InputText", InputText);
 app.component("Password", Password);
@@ -65,6 +68,7 @@ app.component("TabView", TabView);
 app.component("TabPanel", TabPanel);
 app.component("DataTable", DataTable);
 app.component("Column", Column);
+app.component("ConfirmPopup", ConfirmPopup);
 app.use(ToastService);
 
 app.provide("http", http);

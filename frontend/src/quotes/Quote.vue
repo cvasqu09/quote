@@ -1,10 +1,11 @@
 <template>
   <Card class="quote-card">
     <template #content>
+      <ConfirmPopup></ConfirmPopup>
       <div class="p-d-flex p-jc-between">
         <span class="p-mr-3 quote-text">"{{ quote }}"</span>
         <transition name="fade">
-          <i v-show="allowDelete" class="pi pi-trash trash-icon" @click="deleteQuote()"></i>
+          <i v-show="allowDelete" class="pi pi-trash trash-icon" @click="deleteQuote($event)"></i>
         </transition>
       </div>
     </template>
@@ -26,6 +27,7 @@ import http from "../utils/http";
 import {useToast} from "primevue/usetoast";
 import {StatusCodes} from "http-status-codes";
 import {debounce} from "lodash";
+import { useConfirm } from "primevue/useconfirm";
 
 export default {
   name: "Quote",
@@ -65,18 +67,29 @@ export default {
     const liked_by_user = ref(props.liked_by_user)
     const like_count = ref(props.like_count)
     const toastService = useToast();
+    const confirm = useConfirm();
 
     const toggleShowDeleteIcon = () => {
       showDeleteIcon.value = (!showDeleteIcon.value && props.allowDelete)
     }
-    const deleteQuote = async () => {
-      console.log('deleting quote with id', id.value);
-      try {
-        await http.delete(`quote/${id.value}`);
-        emit('delete')
-      } catch (e) {
-        console.log('error deleting', e);
-      }
+    const deleteQuote = (event) => {
+      console.log('deleting quote')
+      confirm.require({
+        target: event.currentTarget,
+        message: "Are you sure you want to delete?",
+        icon: 'pi pi-trash',
+        accept: async () => {
+          try {
+            await http.delete(`quote/${id.value}`);
+            emit('delete')
+          } catch (e) {
+            console.log('error deleting', e);
+          }
+        },
+        reject: () => {
+          confirm.close()
+        }
+      })
     }
     const getLikeClass = () => {
       return liked_by_user.value ? 'liked' : null;

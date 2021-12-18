@@ -2,7 +2,7 @@
   <div v-show="shouldShowForm">
     <AddQuoteForm @onQuoteAdded="quoteAdded()" @onCancel="onCancel()"></AddQuoteForm>
   </div>
-  <ProgressSpinner v-if="loading"/>
+  <ProgressSpinner v-if="quotesLoading"/>
   <QuoteList :quotes="quotes" :allow-delete="true"></QuoteList>
   <div class="p-d-flex p-jc-end">
     <Button label="Add Quote" icon="pi pi-plus" class="p-mb-2 p-button-rounded" @click="toggleShowForm()"></Button>
@@ -25,7 +25,7 @@ export default {
     const showForm = ref(false);
     const quotes = ref([]);
     const toggleShowForm = () => showForm.value = !showForm.value
-    const {getQuotes, loading} = useQuotes()
+    const {getQuotes, quotesLoading} = useQuotes()
 
     const loadQuotes = async () => {
       try {
@@ -65,7 +65,7 @@ export default {
       toggleShowForm,
       removeQuoteFromList,
       shouldShowForm,
-      loading
+      quotesLoading
     }
   }
 }

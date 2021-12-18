@@ -9,7 +9,15 @@ from django.db.models import Count
 
 class QuoterManager(models.Manager):
     def get_most_quoted(self):
-        return self.values("id", "name", "added_by").annotate(quote_count=Count("quotes")).order_by("-quote_count")
+        return self.values(
+            "id", "name", "added_by"
+        ).annotate(
+            quote_count=Count("quotes")
+        ).filter(
+            quote_count__gt=0
+        ).order_by(
+            "-quote_count"
+        )
 
 
 class Quoter(models.Model):
@@ -25,7 +33,7 @@ class QuoteManager(models.Manager):
         return self.annotate(likes=Count('like')).order_by('-likes', '-added_at')
 
     def get_top_quotes_by_quoter_with_id(self, quoter_id):
-        return self.filter(quoted_by__id=quoter_id).annotate(likes=Count('like')).order_by('-likes')
+        return self.filter(quoted_by__id=quoter_id).annotate(likes=Count('like')).order_by('-likes', "-added_at")[:3]
 
     def search_for_quotes(self, search_text):
         return self.filter(text__icontains=search_text, quoted_by__name__icontains=search_text)

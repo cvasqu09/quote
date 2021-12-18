@@ -21,7 +21,6 @@
       <ProgressSpinner v-if="quotersLoading"/>
       <div v-else>
         <div class="p-d-flex">
-          {{selectedQuoter}}
           <DataTable :value="quoters" :paginator="true" :rows="10"
                      selectionMode="single"
                      v-model:selection="selectedQuoter"
@@ -33,11 +32,13 @@
             <Column field="likes" header="Number of Likes"></Column>
           </DataTable>
         </div>
-        <Card>
-          <template #title>
-
-          </template>
-        </Card>
+        <ProgressSpinner v-if="quotersTopQuotesLoading" />
+        <div v-if="selectedQuoter && !quotersTopQuotesLoading" class="p-mt-2">
+          <h2>
+            {{selectedQuoter.name}}'s Top 3 Quotes
+          </h2>
+          <QuoteList :quotes="quotersTopQuotes"></QuoteList>
+        </div>
       </div>
     </TabPanel>
   </TabView>
@@ -52,6 +53,7 @@ import debounce from "lodash/debounce"
 import useQuotes, {QuoteType} from "@/composables/useQuotes";
 import useQuoters, {QuoterType} from "@/composables/useQuoters";
 import QuoterCard from "@/quoters/QuoterCard";
+import useQuotersTopQuotes from "@/composables/useQuotersTopQuotes";
 
 export default {
   name: "HomePage",
@@ -70,6 +72,7 @@ export default {
     const selectedOptionValue = ref(QuoteType.ALL);
     const {getQuotes, quotesLoading} = useQuotes();
     const {getQuoters, quotersLoading} = useQuoters();
+    const {getQuotersTopQuotes, quotersTopQuotes, quotersTopQuotesLoading} = useQuotersTopQuotes();
 
     const loadQuotes = async (searchText) => {
       try {
@@ -111,6 +114,10 @@ export default {
       }
     })
 
+    watch(selectedQuoter, async() => {
+      await getQuotersTopQuotes(selectedQuoter.value.id)
+    })
+
     return {
       quotesLoading,
       quotes,
@@ -119,6 +126,8 @@ export default {
       selectedOptionValue,
       selectedQuoter,
       selectOptions,
+      quotersTopQuotes,
+      quotersTopQuotesLoading,
       searchText,
       activeIndex
     }

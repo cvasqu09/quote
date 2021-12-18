@@ -1,5 +1,5 @@
 import useMakeRequest from "./useMakeRequest";
-import { HTTPMethod } from "../utils/http";
+import { HTTPMethod } from "@/utils/http";
 
 export enum QuoterType {
   TOP = "top",
@@ -13,7 +13,6 @@ export default () => {
     url += `type=${type}`;
 
     try {
-      console.log("making request");
       return await makeRequest(url, HTTPMethod.GET);
     } catch (e) {
       return [];
